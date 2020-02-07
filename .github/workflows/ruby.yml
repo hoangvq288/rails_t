@@ -19,7 +19,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports: 
-          - 5432/tcp
+          - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v1
@@ -36,7 +36,19 @@ jobs:
         gem install bundler
         bundle config set path 'vendor/bundle'
         bundle install --jobs 4 --retry 3
-        bundle exec rake db:setup
-        bundle exec rake db:test:prepare
-        bundle exec rspec
-        bundle exec cucumber
+    - name: Setup Database
+      run: |
+        cp config/database.yml.github-actions config/database.yml
+        bundle exec rake db:create
+        bundle exec rake db:schema:load
+      env:
+        RAILS_ENV: test
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+ 
+    - name: Run RSpec
+      run: COVERAGE=true bundle exec rspec  --require rails_helper
+      env:
+        RAILS_ENV: test
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
