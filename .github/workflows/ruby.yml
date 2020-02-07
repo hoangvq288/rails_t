@@ -15,8 +15,6 @@ jobs:
     services:
       postgres:
         image: postgres:9
-        ports:
-          - 5432:5432
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -31,5 +29,8 @@ jobs:
     - name: Build and test with Rake
       run: |
         gem install bundler
-        bundle install --jobs 4 --retry 3
-        bundle exec rake
+        bundle install --deployment --path vendor/bundle
+        bundle exec rake db:setup
+        bundle exec rake db:test:prepare
+        bundle exec rspec
+        bundle exec cucumber
