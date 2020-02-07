@@ -29,7 +29,7 @@ jobs:
         ruby-version: 2.4.x
     - name: Install dependent libraries
       run: sudo apt-get install libpq-dev
-    - name: Build and create DB
+    - name: Build and test with Rake
       env:
         # use localhost for the host here because we have specified a container for the job.
         # If we were running the job on the VM this would be postgres
@@ -37,7 +37,6 @@ jobs:
         PGUSER: postgres
         PGPORT: ${ { job.services.postgres.ports[5432] }} # get randomly assigned published port
         RAILS_ENV: test
-    - name: Build and test with Rake
       run: |
         gem install bundler
         bundle config set path 'vendor/bundle'
