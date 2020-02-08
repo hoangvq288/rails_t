@@ -17,3 +17,14 @@ Scenario: Listing books in my inventory
 Scenario: Adding a new book to the inventory
   When I submit a new book to my inventory
   Then I should see the new book in my inventory
+
+
+Scenario: Changing the nam of a book
+  Given I have a book in my inventory
+  When I change the title of my book
+  Then I should see the book with the new title in my inventory
+
+Scenario: Rmoving a book from my inventory
+  Given I have a book in my inventory
+  When I remove a book from my inventory
+  Then I should not see it listing in the inventory anymore
